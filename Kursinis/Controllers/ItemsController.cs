@@ -41,7 +41,7 @@ namespace Kursinis.Controllers
             return Ok(_repositoryService.GetItems().Where( item => item.RequiresAuthorizedUser == false));
         }
 
-        [HttpGet]  
+        [HttpGet("{id}")]  
         public IActionResult GetItemById(int id)
         {
             if (!_aurhorizationHelper.HasPermission(Permissions.ViewItem))
@@ -66,7 +66,7 @@ namespace Kursinis.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}/Price")]
         public IActionResult GetItemPrice(int id)
         {
             if (!_aurhorizationHelper.HasPermission(Permissions.ViewItem))
@@ -113,7 +113,7 @@ namespace Kursinis.Controllers
             try
             {
                 var item = _repositoryService.CreateItem(request);
-                return CreatedAtAction(nameof(GetItemById), item, item.Id);
+                return CreatedAtAction(nameof(GetItemById), new { id = item.Id }, item);
             }
             catch (Exception ex)
             {
@@ -121,8 +121,8 @@ namespace Kursinis.Controllers
             }
         }
 
-        [HttpPut]
-        public IActionResult UpdateItem(int id, ItemRequest request)
+        [HttpPut("{id}")]
+        public IActionResult UpdateItem(int id, [FromBody]ItemRequest request)
         {
             if (!_aurhorizationHelper.HasPermission(Permissions.UpdateItems))
             {
@@ -154,7 +154,8 @@ namespace Kursinis.Controllers
             }
         }
 
-        [HttpDelete] IActionResult DeleteItem(int id)
+        [HttpDelete("{id}")] 
+        public IActionResult DeleteItem(int id)
         {
             if (!_aurhorizationHelper.HasPermission(Permissions.DeleteItems))
             {
